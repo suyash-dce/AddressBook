@@ -43,37 +43,28 @@ public class AddressBook {
 		return "Created object for "+firstName+" "+lastName;
 	}
 
-	public static ArrayList<AddressBook> edit(ArrayList<AddressBook> list, String name) {
+	public static ArrayList<AddressBook> delete(ArrayList<AddressBook> list, String name) {
 		
-		//method for edit
+		//method for delete
 		Scanner sc=new Scanner(System.in);
 		boolean flag=false;
 		name.replaceAll("\\P{Print}","");
 		String lower_name=name.toLowerCase();
-		for (AddressBook obj:list) {
-			String firstName=obj.firstName.toLowerCase();
-			String lastName=obj.lastName.toLowerCase();
-			if (firstName.equals(lower_name) ||
-					lastName.equals(lower_name)) {
-				flag=true;
-				System.out.println("Please enter new details.");
-				System.out.print("Address: ");
-				obj.address=sc.next();
-				System.out.print("City: ");
-				obj.city=sc.next();
-				System.out.print("State: ");
-				obj.state=sc.next();
-				System.out.print("ZipCode: ");
-				obj.zipCode=sc.nextLong();
-				System.out.print("Phone No.: ");
-				obj.phoneNo=sc.next();
-				System.out.print("Email: ");
-				obj.email=sc.next();
-				
-				System.out.println("Record updated.");
-				break;
+		
+		try {
+			for (AddressBook obj:list) {
+				String firstName=obj.firstName.toLowerCase();
+				String lastName=obj.lastName.toLowerCase();
+				if (firstName.equals(lower_name) ||
+						lastName.equals(lower_name)) {
+					flag=true;
+					
+					System.out.println("Record deleted for "+obj.firstName+" "+obj.lastName);
+					list.remove(obj);			//delete entry from record
+					System.out.println("Record updated.");
+				}
 			}
-		}
+		}catch(Exception e) {}
 		if (flag==false) {
 			System.out.println("No entry found for "+name);
 		}
@@ -100,15 +91,16 @@ public class AddressBook {
 		record.add(entry2);					//Adding entry to record
 		System.out.println(entry2);
 
-		//editing an existing entry
+		//deleting an existing entry
 		
 		//asking user input
-		System.out.println("Please enter First/Last name of entry to be edited.");
+		System.out.println("Please enter First/Last name of entry to be deleted.");
 		String name=sc.next();
-		record=edit(record,name);
+		record=delete(record,name);
 		
 		//displaying all entries
-		entry1.display();
-		entry2.display();
+		for (AddressBook obj:record) {
+			obj.display();
+		}
 	}
 }
