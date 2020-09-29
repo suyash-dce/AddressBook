@@ -2,105 +2,97 @@ import java.io.*;
 import java.util.*;
 public class AddressBook {
 	
-	public String firstName;		//Obj Attributes
-	public String lastName;
-	public String address;
-	public String city;
-	public String state;
-	public long zipCode;
-	public String phoneNo;
-	public String email;
-	
-	public AddressBook(String firstName, String lastName, String address,
-			String city, String state, long zipCode,
-			String phoneNo, String email) {
-		this.firstName = firstName;				//Constructor
-		this.lastName = lastName;
-		this.address = address;
-		this.city = city;
-		this.state = state;
-		this.zipCode = zipCode;
-		this.phoneNo = phoneNo;
-		this.email = email;
+	private ArrayList<Collection> record;
+
+	public AddressBook() {
+		record=new ArrayList<Collection>();
 	}
 
-	public void display() {				//Method for displaying all details
-		
-		System.out.println("------------------------------------------------------");
-		System.out.println("Name: "+firstName+" "+lastName);
-		System.out.println("Address: "+address);
-		System.out.println("City: "+city);
-		System.out.println("State: "+state);
-		System.out.println("Zip: "+zipCode);
-		System.out.println("Phone No.: "+phoneNo);
-		System.out.println("Email: "+email);
-		System.out.println("------------------------------------------------------");
-		System.out.println();
-	}
-	
-	@Override
-	public String toString() {
-		return "Created object for "+firstName+" "+lastName;
-	}
-
-	public static ArrayList<AddressBook> delete(ArrayList<AddressBook> list, String name) {
-		
-		//method for delete
-		Scanner sc=new Scanner(System.in);
-		boolean flag=false;
-		name.replaceAll("\\P{Print}","");
-		String lower_name=name.toLowerCase();
-		
-		try {
-			for (AddressBook obj:list) {
-				String firstName=obj.firstName.toLowerCase();
-				String lastName=obj.lastName.toLowerCase();
-				if (firstName.equals(lower_name) ||
-						lastName.equals(lower_name)) {
-					flag=true;
-					
-					System.out.println("Record deleted for "+obj.firstName+" "+obj.lastName);
-					list.remove(obj);			//delete entry from record
-					System.out.println("Record updated.");
-				}
-			}
-		}catch(Exception e) {}
-		if (flag==false) {
-			System.out.println("No entry found for "+name);
+	public void display() {
+		for (Collection obj:record) {
+			obj.display();
 		}
-		return list;
+	}
+	
+	public void addToRecord(Collection obj) {
+		record.add(new Collection(obj.firstName, obj.lastName, obj.address,
+				obj.city,obj.state, obj.zipCode, obj.phoneNo, obj.email));
+	}
+
+	public static Collection add() {
+		
+		//method for adding new entries.
+		Scanner sc=new Scanner(System.in);
+		String firstName;					//Attributes to be added
+		String lastName;
+		String address;
+		String city;
+		String state;
+		long zipCode;
+		String phoneNo;
+		String email;
+		
+		//asking user input
+		System.out.println("Please enter details to be added.");
+		System.out.print("First Name: ");
+		firstName=sc.next();
+		System.out.print("Last Name: ");
+		lastName=sc.next();
+		System.out.print("Address: ");
+		address=sc.next();
+		System.out.print("City: ");
+		city=sc.next();
+		System.out.print("State: ");
+		state=sc.next();
+		System.out.print("ZipCode: ");
+		zipCode=sc.nextLong();
+		System.out.print("Phone No.: ");
+		phoneNo=sc.next();
+		System.out.print("Email: ");
+		email=sc.next();
+		
+		//saving as new entry
+		Collection entry=new Collection(firstName,lastName,
+				address,city,state,zipCode,phoneNo,email);
+		return entry;					//returning entry to main
 	}
 	
 	public static void main(String[] args) {
 		
 		Scanner sc=new Scanner(System.in);
-		//Adding a record for all entries
-		ArrayList<AddressBook> record=new ArrayList<AddressBook>();
+		AddressBook buildObj=new AddressBook();
 		
 		//Creating first entry
-		AddressBook entry1=new AddressBook("Suyash", "Jain",
-				"Najafgarh", "New Delhi", "Delhi", 110043, "9810224035",
+		Collection entry1=new Collection("Suyash", "Jain",
+				"Najafgarh", "New Delhi", "Delhi", 110043, "981022035",
 				"suyash.jain@capgemini.com");
-		record.add(entry1);					//Adding entry to record
+		buildObj.addToRecord(entry1);				//Adding entry to record
 		System.out.println(entry1);
 		
 		//Creating second entry
-		AddressBook entry2=new AddressBook("Harshit", "Jain",
+		Collection entry2=new Collection("Harshit", "Jain",
 				"Mahaveer Nagar", "New Delhi", "Delhi", 110043, "8285683470",
 				"harshit.jain@gmail.com");
-		record.add(entry2);					//Adding entry to record
+		buildObj.addToRecord(entry2);				//Adding entry to record
 		System.out.println(entry2);
 
-		//deleting an existing entry
+		//initiating addition of entries
 		
-		//asking user input
-		System.out.println("Please enter First/Last name of entry to be deleted.");
-		String name=sc.next();
-		record=delete(record,name);
+		String user_input="1";
+		while(user_input.equals("1")) {
+			
+			Collection entry=buildObj.add();		//calling function to make new entry
+			buildObj.addToRecord(entry);			//Adding entry to record
+			System.out.println(entry);
+			
+			//asking user to continue adding entries
+			System.out.println();
+			System.out.println("Press 1 to add new entry");
+			System.out.println("Press any other key to exit.");
+			user_input=sc.next();
+		}
 		
 		//displaying all entries
-		for (AddressBook obj:record) {
-			obj.display();
-		}
+			buildObj.display();
 	}
 }
