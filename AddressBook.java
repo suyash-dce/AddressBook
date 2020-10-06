@@ -5,10 +5,14 @@ public class AddressBook {
 	
 	private HashMap<String, ArrayList<Collection>> addressBook;
 	private static ArrayList<Collection> record;
+	private static HashMap<String, Collection> person_cityMap;
+	private static HashMap<String, Collection> person_stateMap;
 
 	public AddressBook() {
 		record=new ArrayList<Collection>();
 		addressBook = new HashMap<String, ArrayList<Collection>>();
+		person_cityMap=new HashMap<String, Collection>();
+		person_stateMap=new HashMap<String, Collection>();
 	}
 
 	public void display() {
@@ -16,11 +20,10 @@ public class AddressBook {
 			obj.display();
 		}
 	}
-
 	public void display(Collection obj) {
 		obj.display();
 	}
-	
+
 	public void addToRecord(Collection obj,String bookname) {
 		try {
 			record.add(new Collection(obj.firstName, obj.lastName, obj.address,
@@ -77,6 +80,8 @@ public class AddressBook {
 		//saving as new entry
 		Collection entry=new Collection(firstName,lastName,
 				address,city,state,zipCode,phoneNo,email);
+		person_cityMap.put(city,entry);
+		person_cityMap.put(state,entry);
 		return entry;					//returning entry to main
 	}
 	
@@ -144,7 +149,7 @@ public class AddressBook {
 		}
 		return list;
 	}
-
+	
 	public void searchContactAll(String contactFirstName,
 			String contactLastName, String LocationName) {
 		
@@ -158,6 +163,27 @@ public class AddressBook {
 						this::display
 					);
 	}
+
+	public void viewByCityorState(String location) {
+		LinkedList<Collection> contactlist = new LinkedList<Contacts>();
+		for(Map.Entry mapElement : person_stateMap.entrySet()) {
+			contactlist.add((Collection)mapElement.getValue());
+		}
+		for(Map.Entry mapElement : person_cityMap.entrySet()) {
+			contactlist.add((Collection)mapElement.getValue());
+		}
+		Stream<Collection> stream=contactlist.stream();
+		stream.filter(obj ->
+				
+				((obj.city).equals(location) ||
+						(obj.state).equals(location))
+		
+				).forEach(
+						
+						this::display
+						
+						);
+	}
 	
 	public static void main(String[] args) {
 		
@@ -170,6 +196,8 @@ public class AddressBook {
 				"suyash.jain@capgemini.com");
 		buildObj.addToRecord(entry1,"AddressBook1");				//Adding entry to record
 		System.out.println(entry1);
+		person_cityMap.put("New Delhi",entry1);
+		person_stateMap.put("Delhi",entry1);
 		
 		//Creating second entry
 		Collection entry2=new Collection("Harshit", "Jain",
@@ -177,11 +205,13 @@ public class AddressBook {
 				"harshit.jain@gmail.com");
 		buildObj.addToRecord(entry2,"AddressBook1");				//Adding entry to record
 		System.out.println(entry2);
+		person_cityMap.put("New Delhi",entry2);
+		person_stateMap.put("Delhi",entry2);
 		
 		//initiating user functions of entries
 		
 		String user_input="1";
-		while((user_input.equals("1") || user_input.equals("2") || user_input.equals("3"))) {
+		while((user_input.equals("1") || user_input.equals("2") || user_input.equals("3")|| user_input.equals("4")|| user_input.equals("5"))) {
 			
 			// Checking in address list is present in hashmap
 			System.out.print("Enter the Name of the Address Book: ");
@@ -202,7 +232,9 @@ public class AddressBook {
 			System.out.println("1. Add a new contact.");
 			System.out.println("2. Edit an existing contact.");
 			System.out.println("3. Delete an existing contact.");
-			System.out.println("4. Switch Directory");
+			System.out.println("4. Search all.");
+			System.out.println("5. View by city/state");
+			System.out.println("6. Switch Directory");
 			System.out.println("Logout");
 			user_input=sc.next();
 			
@@ -238,6 +270,12 @@ public class AddressBook {
 				break;
 			}
 			case "5": {
+				System.out.print("City/State Name: ");
+				String location=sc.next();
+				buildObj.viewByCityorState(location);
+				break;
+			}
+			case "6": {
 				user_input="1";
 				continue;
 			}
