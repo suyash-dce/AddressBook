@@ -16,15 +16,17 @@ public class AddressBook {
 			obj.display();
 		}
 	}
-
 	
-	public void addToRecord(Collection obj) {
-		record.add(new Collection(obj.firstName, obj.lastName, obj.address,
-				obj.city,obj.state, obj.zipCode, obj.phoneNo, obj.email));
+	public void addToRecord(Collection obj,String bookname) {
+		try {
+			record.add(new Collection(obj.firstName, obj.lastName, obj.address,
+					obj.city,obj.state, obj.zipCode, obj.phoneNo, obj.email));
+			addBookMap(bookname, record);
+		}catch(NullPointerException e) {}
 	}
 
-	public void addBookMap(String bookName) {
-		addressBook.put(bookName, new ArrayList<Collection>());
+	public void addBookMap(String bookName, ArrayList<Collection> obj) {
+		addressBook.put(bookName, obj);
 	}
 	
 	public static Collection add() {
@@ -46,6 +48,15 @@ public class AddressBook {
 		firstName=sc.next();
 		System.out.print("Last Name: ");
 		lastName=sc.next();
+		
+		//Checking for duplicates
+		if (record.stream().anyMatch(obj -> obj.firstName.equals(firstName))
+				&& record.stream().anyMatch(obj -> obj.lastName.equals(lastName))) {
+			System.out.println("This contact already existes. Resetting");
+			add();
+			return null;
+		}
+		
 		System.out.print("Address: ");
 		address=sc.next();
 		System.out.print("City: ");
@@ -139,17 +150,15 @@ public class AddressBook {
 		Collection entry1=new Collection("Suyash", "Jain",
 				"Najafgarh", "New Delhi", "Delhi", 110043, "9810224035",
 				"suyash.jain@capgemini.com");
-		buildObj.addToRecord(entry1);				//Adding entry to record
+		buildObj.addToRecord(entry1,"AddressBook1");				//Adding entry to record
 		System.out.println(entry1);
 		
 		//Creating second entry
 		Collection entry2=new Collection("Harshit", "Jain",
-				"Mahaveer Nagar", "New Delhi", "Delhi", 110043, "8285683470",
+				"Mahaveer Nagar", "New Delhi", "Delhi", 110043, "828568470",
 				"harshit.jain@gmail.com");
-		buildObj.addToRecord(entry2);				//Adding entry to record
+		buildObj.addToRecord(entry2,"AddressBook1");				//Adding entry to record
 		System.out.println(entry2);
-		
-		buildObj.addBookMap("AddressBook1");
 		
 		//initiating user functions of entries
 		
@@ -165,7 +174,7 @@ public class AddressBook {
 
 			else {
 				System.out.println("Address book with name " + bookName + " not found. Creating a new entry");
-				buildObj.addBookMap(bookName);
+				buildObj.addBookMap(bookName,new ArrayList<Collection>());
 			}
 			
 			System.out.println("Record "+bookName+" loaded.");
@@ -183,7 +192,7 @@ public class AddressBook {
 			
 			case "1": {
 				Collection entry=buildObj.add();		//calling function to make new entry
-				buildObj.addToRecord(entry);			//Adding entry to record
+				buildObj.addToRecord(entry,bookName);			//Adding entry to record
 				System.out.println(entry);
 				break;
 			}
