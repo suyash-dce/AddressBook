@@ -164,15 +164,7 @@ public class AddressBook {
 					);
 	}
 
-	public void viewByCityorState(String location) {
-		LinkedList<Collection> contactlist = new LinkedList<Contacts>();
-		for(Map.Entry mapElement : person_stateMap.entrySet()) {
-			contactlist.add((Collection)mapElement.getValue());
-		}
-		for(Map.Entry mapElement : person_cityMap.entrySet()) {
-			contactlist.add((Collection)mapElement.getValue());
-		}
-		Stream<Collection> stream=contactlist.stream();
+	public void viewByCityorState(String location, Stream<Contacts> stream) {
 		stream.filter(obj ->
 				
 				((obj.city).equals(location) ||
@@ -183,6 +175,15 @@ public class AddressBook {
 						this::display
 						
 						);
+	}
+
+	public Stream<Collection> createStreamfromMap(HashMap<String, Collection> map) {
+		LinkedList<Collection> contactlist = new LinkedList<Collection>();
+		for(Map.Entry mapElement : map.entrySet()) {
+			contactlist.add((Collection)mapElement.getValue());
+		}
+		Stream<Collection> stream=contactlist.stream();
+		return stream;
 	}
 	
 	public static void main(String[] args) {
@@ -234,7 +235,9 @@ public class AddressBook {
 			System.out.println("3. Delete an existing contact.");
 			System.out.println("4. Search all.");
 			System.out.println("5. View by city/state");
-			System.out.println("6. Switch Directory");
+			System.out.println("6. Count contacts in City");
+			System.out.println("7. Count contacts in State");
+			System.out.println("8. Switch Directory");
 			System.out.println("Logout");
 			user_input=sc.next();
 			
@@ -272,10 +275,33 @@ public class AddressBook {
 			case "5": {
 				System.out.print("City/State Name: ");
 				String location=sc.next();
-				buildObj.viewByCityorState(location);
+				Stream<Collection> stream_city=buildObj.createStreamfromMap(person_cityMap);
+				Stream<Collection> stream_state=buildObj.createStreamfromMap(person_stateMap);
+				buildObj.viewByCityorState(location, stream_city);
+				buildObj.viewByCityorState(location, stream_state);
 				break;
 			}
 			case "6": {
+				int count=0;
+				System.out.print("City Name: ");
+				String location=sc.next();
+				Stream<Collection> stream_city=buildObj.createStreamfromMap(person_cityMap);
+				count=count+
+						(int)stream_city.filter(obj -> (obj.city).equals(location)).count();
+				System.out.println("The no. of people in "+location+" are "+count);
+				break;
+			}
+			case "7": {
+				int count=0;
+				System.out.print("State Name: ");
+				String location=sc.next();
+				Stream<Collection> stream_state=buildObj.createStreamfromMap(person_stateMap);
+				count=count+
+						(int)stream_state.filter(obj -> (obj.state).equals(location)).count();
+				System.out.println("The no. of people in "+location+" are "+count);
+				break;
+			}
+			case "8": {
 				user_input="1";
 				continue;
 			}
@@ -283,7 +309,7 @@ public class AddressBook {
 				break;
 			}
 		}
-		
+
 		//displaying all entries
 		buildObj.display();
 	}
