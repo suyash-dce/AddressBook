@@ -16,6 +16,10 @@ public class AddressBook {
 			obj.display();
 		}
 	}
+
+	public void display(Collection obj) {
+		obj.display();
+	}
 	
 	public void addToRecord(Collection obj,String bookname) {
 		try {
@@ -140,6 +144,20 @@ public class AddressBook {
 		}
 		return list;
 	}
+
+	public void searchContactAll(String contactFirstName,
+			String contactLastName, String LocationName) {
+		
+			record.stream().filter(obj -> (
+					((obj.city.equals(LocationName)) || (obj.state.equals(LocationName)))	//checking for city/state match
+					&&(obj.firstName.equals(contactFirstName))								//checking for first name match
+					&&(obj.lastName.equals(contactLastName))								//checking for last name match
+					))
+
+					.forEach(
+						this::display
+					);
+	}
 	
 	public static void main(String[] args) {
 		
@@ -209,6 +227,17 @@ public class AddressBook {
 				break;
 			}
 			case "4": {
+				System.out.println("Please enter details to be searched.");
+				System.out.print("First Name: ");
+				String firstName=sc.next();
+				System.out.print("Last Name: ");
+				String lastName=sc.next();
+				System.out.print("City/State: ");
+				String location=sc.next();
+				buildObj.searchContactAll(firstName, lastName, location);
+				break;
+			}
+			case "5": {
 				user_input="1";
 				continue;
 			}
