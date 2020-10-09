@@ -3,6 +3,28 @@ import java.util.*;
 
 public class AddressBook {
 	
+	static Scanner sc = new Scanner(System.in);
+	
+	//Generating function for sorting
+	static SortingFunction firstName = sorted_stream ->
+	((Stream<Collection>) sorted_stream).sorted((obj1,obj2)->
+		obj1.firstName.compareTo(obj2.firstName));
+	
+	static SortingFunction city = sorted_stream ->
+	((Stream<Collection>) sorted_stream).sorted((obj1,obj2)->
+		obj1.city.compareTo(obj2.city));
+	
+	static SortingFunction state = sorted_stream ->
+	((Stream<Collection>) sorted_stream).sorted((obj1,obj2)->
+		obj1.state.compareTo(obj2.state));
+	
+	static SortingFunction zip = sorted_stream ->
+	((Stream<Collection>) sorted_stream).sorted(
+			
+			Comparator.comparingLong(Collection::getZipCode)
+			
+			);
+	
 	private HashMap<String, ArrayList<Collection>> addressBook;
 	private static ArrayList<Collection> record;
 	private static HashMap<String, Collection> person_cityMap;
@@ -221,7 +243,7 @@ public class AddressBook {
 		//initiating user functions of entries
 		
 		String user_input="1";
-		while((user_input.equals("1") || user_input.equals("2") || user_input.equals("3")|| user_input.equals("4")|| user_input.equals("5")||user_input.equals("6") || user_input.equals("7") || user_input.equals("8"))) {
+		while((user_input.equals("1") || user_input.equals("2") || user_input.equals("3")|| user_input.equals("4")|| user_input.equals("5")||user_input.equals("6") || user_input.equals("7") || user_input.equals("8")|| user_input.equals("9"))) {
 			
 			// Checking in address list is present in hashmap
 			System.out.print("Enter the Name of the Address Book: ");
@@ -312,7 +334,30 @@ public class AddressBook {
 				break;
 			}
 			case "8": {
-				buildObj.sortedStreamDisplay();
+				System.out.println("Please enter sorting parameter.");
+				System.out.println("Sort by - 1. Name");
+				System.out.println("          2. City");
+				System.out.println("          3. State");
+				System.out.println("          4. Zip Code");
+				String input=sc.next();
+				
+				switch(input) {
+				
+				case "1":
+					buildObj.sortedStreamDisplay(firstName);
+					break;
+				case "2":
+					buildObj.sortedStreamDisplay(city);
+					break;
+				case "3":
+					buildObj.sortedStreamDisplay(state);
+					break;
+				case "4":
+					buildObj.sortedStreamDisplay(zip);
+					break;
+				default:
+					System.out.println("Unknown Input.");
+				}
 				break;
 			}
 			case "9": {
