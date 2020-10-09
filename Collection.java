@@ -41,4 +41,10 @@ public class Collection {
 		System.out.println();
 		return "Created entry for "+firstName+" "+lastName;
 	}
+	public String getFirstName() {
+		return firstname;
+	}
+	public String setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 }
