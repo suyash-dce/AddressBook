@@ -41,10 +41,20 @@ public class Collection {
 		System.out.println();
 		return "Created entry for "+firstName+" "+lastName;
 	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 	public long getZipCode() {
 		return zipCode;
 	}
 	public void setZipCode(long zipCode) {
 		this.zipCode = zipCode;
+	}
+	public String pushDataToFile() {
+		return firstName+":"+lastName+":"+address+":"+city+":"+state
+				+":"+zipCode+":"+phoneNo+":"+email;
 	}
 }
