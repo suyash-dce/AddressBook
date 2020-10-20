@@ -63,15 +63,8 @@ public class AddressBook {
 	public static Collection add() {
 
 		// method for adding new entries.
-		Scanner sc = new Scanner(System.in);
-		String firstName; // Attributes to be added
-		String lastName;
-		String address;
-		String city;
-		String state;
+		String firstName, lastName, address, city, state, phoneNo, email; // Attributes to be added
 		long zipCode;
-		String phoneNo;
-		String email;
 
 		// asking user input
 		System.out.println("Please enter details to be added.");
@@ -111,7 +104,6 @@ public class AddressBook {
 	public static ArrayList<Collection> edit(ArrayList<Collection> list, String name) {
 
 		// method for edit
-		Scanner sc = new Scanner(System.in);
 		boolean flag = false;
 		name.replaceAll("\\P{Print}", "");
 		String lower_name = name.toLowerCase();
@@ -147,7 +139,6 @@ public class AddressBook {
 	public static ArrayList<Collection> delete(ArrayList<Collection> list, String name) {
 
 		// method for delete
-		Scanner sc = new Scanner(System.in);
 		boolean flag = false;
 		name.replaceAll("\\P{Print}", "");
 		String lower_name = name.toLowerCase();
@@ -274,45 +265,38 @@ public class AddressBook {
 			System.out.println("Nothing to read!!");
 		return null;
 	}
-
-	public static void main(String[] args) {
-
-		Scanner sc = new Scanner(System.in);
-		AddressBook buildObj = new AddressBook();
-
-		// Creating first entry
-		Collection entry1 = new Collection("Suyash", "Jain", "Najafgarh", "New Delhi", "Delhi", 110043, "9810224035",
-				"suyash.jain@capgemini.com");
-		buildObj.addToRecord(entry1, "AddressBook1"); // Adding entry to record
-		System.out.println(entry1);
-		person_cityMap.put("New Delhi", entry1);
-		person_stateMap.put("Delhi", entry1);
-
-		// Creating second entry
-		Collection entry2 = new Collection("Harshit", "Jain", "Mahaveer Nagar", "New Delhi", "Delhi", 110043,
-				"828568470", "harshit.jain@gmail.com");
-		buildObj.addToRecord(entry2, "AddressBook1"); // Adding entry to record
-		System.out.println(entry2);
-		person_cityMap.put("New Delhi", entry2);
-		person_stateMap.put("Delhi", entry2);
-
-		// initiating user functions of entries
-
-		String user_input = "1";
-		while ((user_input.equals("1") || user_input.equals("2") || user_input.equals("3") || user_input.equals("4")
-				|| user_input.equals("5") || user_input.equals("6") || user_input.equals("7") || user_input.equals("8")
-				|| user_input.equals("9") || user_input.equals("10") || user_input.equals("11"))) {
+	
+	public void writeToJSON() {
+		if(new FileIOJson().writeData(record)) {
+			System.out.println("Write to JSON Successful.");
+		}
+	}
+	
+	public ArrayList<Collection> readFromJSON() {
+		ArrayList<Collection> fileRecord=new FileIOJson().readData();
+		if(fileRecord!=null) {
+			for (Collection c:fileRecord) {
+				c.display();
+			}
+			return fileRecord;
+		}else System.out.println("Nothing to read!!");
+		return null;
+	}
+	
+	private void menuDrivenProgram(AddressBook addrBook) {
+		int user_input = 1;
+		do {
 
 			// Checking in address list is present in hashmap
 			System.out.print("Enter the Name of the Address Book: ");
 			String bookName = sc.next();
-			if (buildObj.addressBook.containsKey(bookName)) {
-				buildObj.record = buildObj.addressBook.get(bookName);
+			if (addrBook.addressBook.containsKey(bookName)) {
+				addrBook.record = addrBook.addressBook.get(bookName);
 			}
 
 			else {
 				System.out.println("Address book with name " + bookName + " not found. Creating a new entry");
-				buildObj.addBookMap(bookName, new ArrayList<Collection>());
+				addrBook.addBookMap(bookName, new ArrayList<Collection>());
 			}
 
 			System.out.println("Record " + bookName + " loaded.");
@@ -331,29 +315,29 @@ public class AddressBook {
 			System.out.println("10. Read Data From File and Display");
 			System.out.println("11. Switch Directory");
 			System.out.println("Logout");
-			user_input = sc.next();
+			user_input = sc.nextInt();
 
 			switch (user_input) {
 
-			case "1": {
-				Collection entry = buildObj.add(); // calling function to make new entry
-				buildObj.addToRecord(entry, bookName); // Adding entry to record
+			case 1: {
+				Collection entry = addrBook.add(); // calling function to make new entry
+				addrBook.addToRecord(entry, bookName); // Adding entry to record
 				System.out.println(entry);
 				break;
 			}
-			case "2": {
+			case 2: {
 				System.out.println("Please enter First/Last name of entry to be edited.");
 				String name = sc.next();
-				ArrayList<Collection> list = buildObj.edit(record, name);
+				ArrayList<Collection> list = addrBook.edit(record, name);
 				break;
 			}
-			case "3": {
+			case 3: {
 				System.out.println("Please enter First/Last name of entry to be deleted.");
 				String name = sc.next();
 				record = delete(record, name);
 				break;
 			}
-			case "4": {
+			case 4: {
 				System.out.println("Please enter details to be searched.");
 				System.out.print("First Name: ");
 				String firstName = sc.next();
@@ -361,82 +345,107 @@ public class AddressBook {
 				String lastName = sc.next();
 				System.out.print("City/State: ");
 				String location = sc.next();
-				buildObj.searchContactAll(firstName, lastName, location);
+				addrBook.searchContactAll(firstName, lastName, location);
 				break;
 			}
-			case "5": {
+			case 5: {
 				System.out.print("City/State Name: ");
 				String location = sc.next();
-				Stream<Collection> stream_city = buildObj.createStreamfromMap(person_cityMap);
-				Stream<Collection> stream_state = buildObj.createStreamfromMap(person_stateMap);
-				buildObj.viewByCityorState(location, stream_city);
-				buildObj.viewByCityorState(location, stream_state);
+				Stream<Collection> stream_city = addrBook.createStreamfromMap(person_cityMap);
+				Stream<Collection> stream_state = addrBook.createStreamfromMap(person_stateMap);
+				addrBook.viewByCityorState(location, stream_city);
+				addrBook.viewByCityorState(location, stream_state);
 				break;
 			}
-			case "6": {
+			case 6: {
 				int count = 0;
 				System.out.print("City Name: ");
 				String location = sc.next();
-				Stream<Collection> stream_city = buildObj.createStreamfromMap(person_cityMap);
+				Stream<Collection> stream_city = addrBook.createStreamfromMap(person_cityMap);
 				count = count + (int) stream_city.filter(obj -> (obj.city).equals(location)).count();
 				System.out.println("The no. of people in " + location + " are " + count);
 				break;
 			}
-			case "7": {
+			case 7: {
 				int count = 0;
 				System.out.print("State Name: ");
 				String location = sc.next();
-				Stream<Collection> stream_state = buildObj.createStreamfromMap(person_stateMap);
+				Stream<Collection> stream_state = addrBook.createStreamfromMap(person_stateMap);
 				count = count + (int) stream_state.filter(obj -> (obj.state).equals(location)).count();
 				System.out.println("The no. of people in " + location + " are " + count);
 				break;
 			}
-			case "8": {
+			case 8: {
 				System.out.println("Please enter sorting parameter.");
 				System.out.println("Sort by - 1. Name");
 				System.out.println("          2. City");
 				System.out.println("          3. State");
 				System.out.println("          4. Zip Code");
-				String input = sc.next();
+				int input = sc.nextInt();
 
 				switch (input) {
 
-				case "1":
-					buildObj.sortedStreamDisplay(firstName);
+				case 1:
+					addrBook.sortedStreamDisplay(firstName);
 					break;
-				case "2":
-					buildObj.sortedStreamDisplay(city);
+				case 2:
+					addrBook.sortedStreamDisplay(city);
 					break;
-				case "3":
-					buildObj.sortedStreamDisplay(state);
+				case 3:
+					addrBook.sortedStreamDisplay(state);
 					break;
-				case "4":
-					buildObj.sortedStreamDisplay(zip);
+				case 4:
+					addrBook.sortedStreamDisplay(zip);
 					break;
 				default:
 					System.out.println("Unknown Input.");
 				}
 				break;
 			}
-			case "9": {
-				buildObj.writeToFile();
-				buildObj.writeToCSV();
+			case 9: {
+				addrBook.writeToFile();
+				addrBook.writeToCSV();
+				addrBook.writeToJSON();
 				break;
 			}
-			case "10": {
-				buildObj.readFromCSV();
+			case 10: {
+				addrBook.readFromJSON();
 				break;
 			}
-			case "11": {
-				user_input = "1";
+			case 11: {
+				user_input = 1;
 				continue;
 			}
 			default:
 				break;
 			}
-		}
+		} while (user_input >= 1 && user_input <= 11);
+		
+	}
 
+	public static void main(String[] args) {
+		AddressBook addrBook = new AddressBook();
+
+		// Creating first entry
+		Collection entry1 = new Collection("Suyash", "Jain", "Najafgarh", "New Delhi", "Delhi", 110043, "9810224035",
+				"suyash.jain@gmail.com");
+		addrBook.addToRecord(entry1, "AddressBook1"); // Adding entry to record
+		System.out.println(entry1);
+		person_cityMap.put("New Delhi", entry1);
+		person_stateMap.put("Delhi", entry1);
+
+		// Creating second entry
+		Collection entry2 = new Collection("Harshit", "Jain", "Njf", "New Delhi", "Delhi", 110043,
+				"828568470", "harshit.jain@gmail.com");
+		addrBook.addToRecord(entry2, "AddressBook1"); // Adding entry to record
+		System.out.println(entry2);
+		person_cityMap.put("New Delhi", entry2);
+		person_stateMap.put("Delhi", entry2);
+
+		// initiating user functions of entries
+		addrBook.menuDrivenProgram(addrBook);
+		
 		// displaying all entries
-		buildObj.display();
+		addrBook.display();
 	}
 }
