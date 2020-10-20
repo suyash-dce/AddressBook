@@ -266,6 +266,23 @@ public class AddressBook {
 		return null;
 	}
 	
+	public void writeToJSON() {
+		if(new FileIOJson().writeData(record)) {
+			System.out.println("Write to JSON Successful.");
+		}
+	}
+	
+	public ArrayList<Collection> readFromJSON() {
+		ArrayList<Collection> fileRecord=new FileIOJson().readData();
+		if(fileRecord!=null) {
+			for (Collection c:fileRecord) {
+				c.display();
+			}
+			return fileRecord;
+		}else System.out.println("Nothing to read!!");
+		return null;
+	}
+
 	private void menuDrivenProgram(AddressBook addrBook) {
 		int user_input = 1;
 		do {
@@ -388,10 +405,11 @@ public class AddressBook {
 			case 9: {
 				addrBook.writeToFile();
 				addrBook.writeToCSV();
+				addrBook.writeToJSON();
 				break;
 			}
 			case 10: {
-				addrBook.readFromCSV();
+				addrBook.readFromJSON();
 				break;
 			}
 			case 11: {
@@ -406,19 +424,18 @@ public class AddressBook {
 	}
 
 	public static void main(String[] args) {
-
 		AddressBook addrBook = new AddressBook();
 
 		// Creating first entry
 		Collection entry1 = new Collection("Suyash", "Jain", "Najafgarh", "New Delhi", "Delhi", 110043, "9810224035",
-				"suyash.jain@capgemini.com");
+				"suyash.jain@gmail.com");
 		addrBook.addToRecord(entry1, "AddressBook1"); // Adding entry to record
 		System.out.println(entry1);
 		person_cityMap.put("New Delhi", entry1);
 		person_stateMap.put("Delhi", entry1);
 
 		// Creating second entry
-		Collection entry2 = new Collection("Harshit", "Jain", "Mahaveer Nagar", "New Delhi", "Delhi", 110043,
+		Collection entry2 = new Collection("Harshit", "Jain", "Njf", "New Delhi", "Delhi", 110043,
 				"828568470", "harshit.jain@gmail.com");
 		addrBook.addToRecord(entry2, "AddressBook1"); // Adding entry to record
 		System.out.println(entry2);
