@@ -282,7 +282,7 @@ public class AddressBook {
 		}else System.out.println("Nothing to read!!");
 		return null;
 	}
-	
+
 	private void menuDrivenProgram(AddressBook addrBook) {
 		int user_input = 1;
 		do {
